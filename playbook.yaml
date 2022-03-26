@@ -1,0 +1,54 @@
+---
+- name: install LAMP stack
+  hosts: target
+  tasks: 
+  - name: instal apache 
+    yum: 
+      name: httpd 
+      state: latest
+    notify:
+      - enableHttp
+
+  - name: install mySQL
+    yum: 
+      name: mysql-server 
+      state: latest
+    notify:
+      - enableMySQL
+
+  - name: install php
+    yum: 
+      name: php 
+      state: present
+  - name: enable port 80 / 443 
+    firewalld:
+      service: "{{ item }}"
+      permanent: true
+      immediate: true
+      state: enabled
+    with_items:
+          - http
+          - https
+  - name: copy page
+    copy:
+        src: /playbooks/origin/page.html
+        dest: /var/www/html
+  - name: Restart the firewalld service to load in the firewall changes
+    service:
+      name: firewalld
+      state: restarted
+  handlers:
+      - name: enableHttpd
+        service: 
+               name: httpd
+               enabled: yes
+               state: started
+      - name: enableMySQL
+        service:
+               name: mysqld
+               enabled: yes
+               state: started
+              
+...
+ 
+
