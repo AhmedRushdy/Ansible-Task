@@ -37,6 +37,10 @@
     service:
       name: firewalld
       state: restarted
+  - name: Check (GET) to a page and it returns a status 200
+    uri: 
+        url: http://192.168.10.30/page.html
+        status_code: 200
   handlers:
       - name: enableHttpd
         service: 
